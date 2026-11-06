@@ -1,116 +1,160 @@
-# Seed dataset — Recommend Circles to Join
+# Lean In Circle Recommendations
 
-This folder is the dataset for the take-home. It's a small, **fully synthetic** snapshot
-of a Lean In Connect–style community: members, Circles, who belongs to which Circle,
-the topic taxonomy, and recent Circle feed activity.
+Personalized Circle recommendations for Lean In Connect–style members. The API
+ranks Circles a member has not joined, using topic interests and Circle activity
+from a fixed synthetic snapshot, and returns short evidence-based explanations
+so each suggestion is understandable without inventing live-platform claims.
 
-Everything here is generated (`generate.mjs`) — no real people, no real content.
+## Stack
 
-## Files
+- Python 3.12
+- FastAPI
+- SQLAlchemy 2
+- SQLite
+- Pydantic v2
+- pytest
+- Ruff
+- Docker and Docker Compose
 
-| File | Rows | What it is |
-| --- | --- | --- |
-| `data/topics.json` | 22 | The topic taxonomy Circles and members are tagged with |
-| `data/users.json` | 100 | Members: profile fields + stated topic interests |
-| `data/circles.json` | 40 | Circles: profile, topic, capacity, and activity aggregates |
-| `data/memberships.json` | ~440 | Who belongs to which Circle, and their role |
-| `data/activity.json` | ~390 | Recent Circle feed posts with engagement counts |
+## Quick start — Docker
 
-## Loading it
+From a fresh checkout:
 
-The data is plain JSON so it drops into anything — Postgres, SQLite, or just an
-in-memory array. Load it however suits your design; you don't have to mirror our shapes.
-
-```js
-const users = JSON.parse(fs.readFileSync("data/users.json", "utf8"));
+```bash
+docker compose build
+docker compose run --rm api python -m app.seed
+docker compose up -d
 ```
 
-## Data dictionary
+Seeding is explicit and idempotent: it creates (or replaces) seed-managed rows
+in a persistent Docker volume. The API does not seed on image build or container
+start. The SQLite file lives at `/app/state/circles.db` inside the `circles-state`
+volume so JSON fixtures under `/app/data` remain available to the seed command.
 
-### `topics.json`
-| field | type | notes |
-| --- | --- | --- |
-| `id` | int | |
-| `slug` | string | kebab-case, e.g. `negotiation` |
-| `label` | string | display name |
-| `domain` | string | always `content` here |
+Verify:
 
-### `users.json`
-| field | type | notes |
-| --- | --- | --- |
-| `id` | int | |
-| `first_name`, `last_name` | string | synthetic |
-| `has_photo` | bool | whether a profile photo is set |
-| `bio` | string \| null | |
-| `job_title` | string \| null | |
-| `company` | string \| null | |
-| `industry` | string \| null | |
-| `location` | string \| null | |
-| `joined_at` | ISO datetime | account age / tenure signal |
-| `topic_interests` | string[] | topic slugs the member selected; **may be empty** |
-| `profile_completeness` | number 0–1 | share of {photo, bio, job title, company-or-industry, location} present |
+```bash
+curl http://localhost:8000/health
+curl "http://localhost:8000/api/v1/users/23/circle-recommendations?limit=5"
+```
 
-### `circles.json`
-| field | type | notes |
-| --- | --- | --- |
-| `id` | int | |
-| `name`, `slug`, `description` | string / null | `description` and `cover_image_url` may be null |
-| `topic` | string \| null | topic slug; **some Circles have no topic** |
-| `tags` | string[] | free-form topic-ish tags |
-| `cover_image_url` | string \| null | |
-| `format` | enum | `in_person` \| `virtual` \| `hybrid` |
-| `access` | enum | `public` \| `unlisted` |
-| `join_policy` | enum | `open` \| `request` |
-| `max_members` | int \| null | capacity; **null means uncapped** |
-| `member_count` | int | current members |
-| `created_at` | ISO datetime | |
-| `last_activity_at` | ISO datetime | timestamp of the most recent activity |
-| `feed_posts_30d` | int | posts in the last 30 days |
-| `chat_messages_30d` | int | group-chat message volume in the last 30 days (aggregate count only) |
+Interactive docs: [http://localhost:8000/docs](http://localhost:8000/docs)
 
-### `memberships.json`
-| field | type | notes |
-| --- | --- | --- |
-| `user_id` | int | → `users.id` |
-| `circle_id` | int | → `circles.id` |
-| `role` | enum | `member` \| `leader` (a Circle's leaders are just members with `role=leader`) |
-| `joined_at` | ISO datetime | |
+Stop the service (keeps the volume):
 
-### `activity.json`
-| field | type | notes |
-| --- | --- | --- |
-| `id` | int | |
-| `circle_id` | int | → `circles.id` |
-| `author_user_id` | int | → `users.id` (always a member of that Circle) |
-| `body` | string | post text |
-| `reaction_count`, `comment_count`, `save_count` | int | engagement on the post |
-| `created_at` | ISO datetime | |
+```bash
+docker compose down
+```
 
-## A few things are intentionally *derived*, not stored
+Optional and destructive — remove the persistent database volume:
 
-Mirroring the real product, some signals aren't handed to you as a column — you decide
-how to compute them:
+```bash
+docker compose down -v
+```
 
-- **Is a Circle full?** Compare `member_count` to `max_members` (and `max_members` can be null).
-- **How active is a Circle?** Combine `feed_posts_30d`, `last_activity_at`, `chat_messages_30d`,
-  and engagement in `activity.json` however you think best.
-- **A Circle's leaders and their profiles** come from `memberships` (`role=leader`) joined to `users`.
+## Local Python development
 
-## What we deliberately did *not* include
+Requires Python 3.12+.
 
-- **Embeddings / precomputed similarity.** Topic overlap and the fields above are enough for this exercise.
-- **Raw group-chat message text.** Only the aggregate `chat_messages_30d` count, for privacy realism.
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python -m app.seed
+uvicorn app.main:app --reload
+```
 
-## Named records for the scenarios
+Local default database URL: `sqlite:///./data/circles.db` (override with
+`CIRCLES_DATABASE_URL`). Seed and API must use the same URL.
 
-The assignment says we'll run your submission against planted records. Here they are —
-build so these return sensible results, and be ready to talk through them:
+## API documentation
 
-| Scenario | Run for | What's planted |
-| --- | --- | --- |
-| **Cold start** | `user_id 42` | No memberships, no stated interests, empty profile (`profile_completeness = 0`) |
-| **Obvious matches** | `user_id 7` | Interests `leadership-skills`, `public-speaking`; strong active/open Circles exist for both (`#5 Women Who Lead`, `#6 Speak Up Circle`) that she hasn't joined |
-| **Duplicate Circles** | `user_id 15` | Interest `negotiation`; Circles `#10`, `#11`, `#12` are three near-identical active Negotiation Circles — a good list shouldn't return all three |
-| **Full / inactive** | `user_id 23` | Interest `getting-promoted`; `#20 The Promotion Path` is **full** (at capacity) and `#21 Career Climbers` is **inactive** (no posts in ~7 months) — both look like great topic matches but shouldn't rank; `#22 Level Up Collective` is the healthy alternative |
+### `GET /api/v1/users/{user_id}/circle-recommendations`
 
-Regenerate the data anytime with `node generate.mjs` (it's deterministic — same output every run).
+| Parameter | Notes |
+| --- | --- |
+| `user_id` | Positive integer path parameter |
+| `limit` | Query parameter, default `5`, allowed range `1`–`20` |
+
+Response shape:
+
+```json
+{
+  "user_id": 23,
+  "recommendations": [
+    {
+      "rank": 1,
+      "circle_id": 22,
+      "slug": "level-up-collective",
+      "name": "Level Up Collective",
+      "description": "A supportive circle for women focused on getting promoted.",
+      "topic": "getting-promoted",
+      "format": "hybrid",
+      "join_policy": "request",
+      "cover_image_url": "https://images.example.org/circles/level-up-collective.jpg",
+      "reason": "This Circle matches your interest in getting promoted and had recent member activity in the available snapshot."
+    }
+  ]
+}
+```
+
+Behavior:
+
+- Unknown `user_id` → `404` with `{"detail":"User not found"}`
+- Invalid `user_id` or `limit` → `422`
+- Eligible list shorter than `limit` → returns whatever remains (may be empty)
+
+### Other endpoints
+
+| Path | Purpose |
+| --- | --- |
+| `GET /health` | Readiness: `200` when the DB is schematized and minimally seeded; `503` otherwise |
+| `GET /docs` | Swagger UI |
+| `GET /openapi.json` | OpenAPI schema |
+
+## How recommendations work
+
+1. **Eligibility** — drop Circles the member already joined, Circles at capacity,
+   unlisted Circles, and clearly dormant Circles.
+2. **Interest matching** — use explicit topic interests when present; otherwise
+   infer from memberships when enough history exists; otherwise cold-start.
+3. **Activity quality** — blend feed volume, chat volume, and recency against the
+   fixed September 21, 2026 snapshot.
+4. **Confidence-aware scoring** — weight topic relevance vs activity quality by
+   personalization mode (explicit / inferred / cold start).
+5. **Diversity reranking** — greedy selection with a same-topic penalty and a
+   relevance-aware first-five topic cap.
+6. **Explanations** — deterministic sentences grounded in ranking evidence only.
+
+Details: [TECHNICAL_DESIGN.md](TECHNICAL_DESIGN.md).
+
+## Tests
+
+```bash
+ruff check app tests
+pytest -v
+```
+
+Coverage includes the four planted scenarios (users 7, 15, 23, and 42) and
+recommendation requests for all 100 seeded users at limits 1, 5, 10, and 20.
+Tests run in the local Python environment (the runtime image does not ship the
+`tests/` package).
+
+## Data
+
+Synthetic fixtures live in `data/*.json` and are loaded by `python -m app.seed`.
+Field definitions, provenance, planted scenarios, and `generate.mjs` notes are in
+[DATASET.md](DATASET.md).
+
+Do not commit a generated SQLite database. JSON fixtures are source data; the
+database is created by seeding.
+
+## Assumptions and limitations
+
+- Data is synthetic and snapshot-based (reference date: 2026-09-21 UTC).
+- No external LLM, embeddings, or vector database is required.
+- Ranking uses topic and activity signals only; Circles have no geography field.
+- Cold-start users receive quality-based community recommendations without
+  invented personalization.
+- Explanations describe snapshot evidence, not live platform activity.
+- Circles with `join_policy=request` remain eligible but require approval to join.

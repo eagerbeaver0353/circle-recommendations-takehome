@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.tox/
+
+# SQLite / local data
+*.db
+*.sqlite
+*.sqlite3
+data/*.db
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+**/.DS_Store
+
+# Docker local overrides (if added later)
+compose.override.yaml
+compose.override.yml

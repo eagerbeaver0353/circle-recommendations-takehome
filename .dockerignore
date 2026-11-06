@@ -1,0 +1,53 @@
+.git
+.gitignore
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python caches and bytecode
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Test and lint caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.tox/
+.cache/
+
+# Local SQLite databases (never bake a generated DB into the image)
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+data/*.db
+data/*.db-*
+
+# OS / IDE / secrets
+.DS_Store
+**/.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+.env
+.env.*
+!.env.example
+
+# Local agent / editor metadata (if present)
+.cursor/
+agent-transcripts/
