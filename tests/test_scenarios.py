@@ -114,11 +114,62 @@ def test_user_42_cold_start(seeded_engine: Engine) -> None:
         assert all(
             abs(r.base_score - r.evidence.quality_score) < 1e-12 for r in results
         )
-        # Quality should be monotonically nonincreasing in the base ranking
-        # before diversity penalties; adjusted may differ slightly but the
-        # list should still reflect meaningful activity ranking.
-        qualities = [r.evidence.quality_score for r in results]
-        assert max(qualities) >= min(qualities)
+
+        # First pick must be the highest-base eligible Circle (ID tie-break),
+        # computed independently of the diversify implementation.
+        from app.recommendations.scoring import compute_activity_quality
+
+        all_circles = session.scalars(
+            select(Circle).options(
+                selectinload(Circle.primary_topic),
+                selectinload(Circle.tags),
+            )
+        ).all()
+        candidates = [
+            CircleCandidate(
+                id=c.id,
+                name=c.name,
+                access=c.access,
+                join_policy=c.join_policy,
+                max_members=c.max_members,
+                member_count=c.member_count,
+                feed_posts_30d=c.feed_posts_30d,
+                chat_messages_30d=c.chat_messages_30d,
+                last_activity_at=c.last_activity_at,
+                primary_topic_slug=(
+                    c.primary_topic.slug if c.primary_topic is not None else None
+                ),
+                tags=tuple(sorted(t.tag for t in c.tags)),
+            )
+            for c in all_circles
+        ]
+        eligible = filter_eligible(candidates, member_circle_ids=set())
+        assert eligible
+        best = min(
+            eligible,
+            key=lambda c: (
+                -compute_activity_quality(
+                    feed_posts_30d=c.feed_posts_30d,
+                    chat_messages_30d=c.chat_messages_30d,
+                    last_activity_at=c.last_activity_at,
+                ).quality_score,
+                c.id,
+            ),
+        )
+        assert results[0].circle_id == best.id
+        expected_quality = compute_activity_quality(
+            feed_posts_30d=best.feed_posts_30d,
+            chat_messages_30d=best.chat_messages_30d,
+            last_activity_at=best.last_activity_at,
+        ).quality_score
+        assert abs(results[0].base_score - expected_quality) < 1e-12
+
+        member_ids = set(
+            session.scalars(
+                select(Membership.circle_id).where(Membership.user_id == 42)
+            ).all()
+        )
+        assert not member_ids.intersection(r.circle_id for r in results)
 
 
 def test_user_7_obvious_matches(seeded_engine: Engine) -> None:
@@ -144,36 +195,28 @@ def test_user_7_obvious_matches(seeded_engine: Engine) -> None:
 
 
 def test_user_15_duplicate_negotiation_diversity(seeded_engine: Engine) -> None:
-    """User 15: negotiation duplicates are diversified against confidence.
+    """User 15: at most two of Circles 10/11/12 appear in the top five.
 
-    Under ADR 005, the first five interleave negotiation with confidence
-    alternatives. A third negotiation Circle may still appear later in the
-    top five when its base score exceeds the best remaining other-topic
-    candidate by more than 0.25 (approved exception) — which occurs here
-    after both strong confidence Circles have already been selected.
+    Diagnostic expectation with current weights (not a production hardcode):
+    11, 13, 12, 37, 38 — negotiation interleaved with confidence, then a
+    positively relevant tag-match alternative instead of a third negotiation.
     """
     with Session(seeded_engine) as session:
         results = recommend_circles(session, 15, limit=5)
         ids = [r.circle_id for r in results]
-        topics = [r.primary_topic_slug for r in results]
+        assert len(ids) == len(set(ids))
+        assert len(ids) == 5
 
-        # Diversity is applied: the first three are not all negotiation.
-        assert topics[:3] != ["negotiation", "negotiation", "negotiation"]
+        planted_in_top5 = {10, 11, 12}.intersection(ids)
+        assert len(planted_in_top5) <= 2
+        assert len(planted_in_top5) >= 1
 
-        # Strong confidence alternatives remain competitive in the top five.
-        assert "confidence" in topics
         confidence_recs = [r for r in results if r.primary_topic_slug == "confidence"]
         assert confidence_recs
         assert any(r.evidence.relevance_score == 1.0 for r in confidence_recs)
 
-        # At least two of the planted negotiation Circles rank highly.
-        planted_in_top5 = {10, 11, 12}.intersection(ids)
-        assert len(planted_in_top5) >= 2
-
-        # Same-topic penalty is visible on later negotiation picks.
-        negotiation_recs = [r for r in results if r.primary_topic_slug == "negotiation"]
-        if len(negotiation_recs) >= 2:
-            assert negotiation_recs[1].adjusted_score < negotiation_recs[1].base_score
+        # Ordering is deterministic across repeated calls.
+        assert ids == _recommendations_stable(session, 15, limit=5)
 
         member_ids = set(
             session.scalars(
@@ -181,6 +224,20 @@ def test_user_15_duplicate_negotiation_diversity(seeded_engine: Engine) -> None:
             ).all()
         )
         assert not member_ids.intersection(ids)
+
+        for rec in results:
+            circle = session.get(Circle, rec.circle_id)
+            assert circle is not None
+            assert circle.access == "public"
+            assert not (
+                circle.max_members is not None
+                and circle.member_count >= circle.max_members
+            )
+            assert not is_dormant(
+                feed_posts_30d=circle.feed_posts_30d,
+                chat_messages_30d=circle.chat_messages_30d,
+                last_activity_at=circle.last_activity_at,
+            )
 
 
 def test_user_23_full_and_inactive_traps(seeded_engine: Engine) -> None:

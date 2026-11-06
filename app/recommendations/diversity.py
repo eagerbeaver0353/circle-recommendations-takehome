@@ -1,6 +1,10 @@
 """Deterministic greedy diversification reranking (ADR 005).
 
 Pure functions — does not mutate input candidate records.
+
+Amendment: within the first five positions, a positively relevant
+(``relevance_score > 0``) different-topic alternative that itself fits the
+topic cap takes priority over the base-score gap exception.
 """
 
 from __future__ import annotations
@@ -102,26 +106,67 @@ def _allows_topic_cap_exception(
     return candidate.base_score > alternative.base_score + margin
 
 
+def _has_positively_relevant_cap_safe_alternative(
+    candidate: ScoredCandidate,
+    remaining: Sequence[ScoredCandidate],
+    selected_topic_counts: Counter[str],
+    selected_count: int,
+) -> bool:
+    """True when a different-topic remaining Circle has relevance > 0 and fits the cap.
+
+    Uses structured scoring evidence only — no second relevance calculation.
+    A candidate that has itself exhausted its topic cap is not a viable alternative.
+    """
+    topic = candidate.primary_topic_slug
+    for other in remaining:
+        if other.circle_id == candidate.circle_id:
+            continue
+        if other.primary_topic_slug == topic:
+            continue
+        if other.evidence.relevance_score <= 0:
+            continue
+        if _would_exceed_topic_cap(other, selected_topic_counts, selected_count):
+            continue
+        return True
+    return False
+
+
 def _pick_next(
     remaining: list[ScoredCandidate],
     selected: list[ScoredCandidate],
     selected_topic_counts: Counter[str],
 ) -> ScoredCandidate:
-    """Choose the next Circle under adjusted-score ranking and the topic cap."""
+    """Choose the next Circle under adjusted-score ranking and the topic cap.
+
+    Within the first five positions, if selecting a candidate would exceed the
+    per-topic cap, positively relevant different-topic alternatives that still
+    fit the cap take priority over the base-score gap exception.
+    """
     ranked = sorted(
         remaining,
         key=lambda c: _selection_sort_key(c, selected_topic_counts),
     )
+    selected_count = len(selected)
 
     for candidate in ranked:
         if not _would_exceed_topic_cap(
-            candidate, selected_topic_counts, len(selected)
+            candidate, selected_topic_counts, selected_count
         ):
             return candidate
 
+        # Would be a third+ same-topic pick inside the top five.
+        if _has_positively_relevant_cap_safe_alternative(
+            candidate,
+            remaining,
+            selected_topic_counts,
+            selected_count,
+        ):
+            # Defer — do not let the gap exception bypass a relevant alternative.
+            continue
+
+        # No suitable positively relevant alternative: original gap exception.
         alternative = _best_alternative_by_base(candidate, remaining)
         if alternative is None:
-            # No suitable alternative remains — allow the third.
             return candidate
         if _allows_topic_cap_exception(candidate, alternative):
             return candidate
@@ -146,6 +191,7 @@ def diversify(
     - Independent of input collection order
     - Does not mutate input records
     - Conditional topic cap applies only to the first five positions
+    - Positively relevant alternatives outrank the 0.25 gap exception
     """
     if limit <= 0 or not candidates:
         return []

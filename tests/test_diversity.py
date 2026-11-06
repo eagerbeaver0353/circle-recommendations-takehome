@@ -1,4 +1,4 @@
-"""Unit tests for ADR 005 diversity reranking."""
+"""Unit tests for ADR 005 diversity reranking (including relevance-aware cap)."""
 
 from __future__ import annotations
 
@@ -35,8 +35,16 @@ def _cand(
     circle_id: int,
     base_score: float,
     topic: str | None,
+    *,
     name: str | None = None,
+    relevance_score: float = 1.0,
+    relevance_source: str | None = "primary_topic",
 ) -> ScoredCandidate:
+    source = relevance_source
+    if relevance_score <= 0:
+        source = None
+    elif relevance_score < 1.0 and relevance_source == "primary_topic":
+        source = "tag"
     return ScoredCandidate(
         circle_id=circle_id,
         circle_name=name or f"Circle {circle_id}",
@@ -44,7 +52,9 @@ def _cand(
         base_score=base_score,
         evidence=_evidence(
             base_score=base_score,
-            matched_topic_or_tag=topic,
+            relevance_score=relevance_score,
+            relevance_source=source,
+            matched_topic_or_tag=topic if relevance_score > 0 else None,
         ),
     )
 
@@ -64,19 +74,19 @@ def test_two_repeats_apply_020_penalty() -> None:
 
 def test_null_topics_are_not_grouped() -> None:
     candidates = [
-        _cand(1, 0.90, None),
-        _cand(2, 0.89, None),
-        _cand(3, 0.88, None),
+        _cand(1, 0.90, None, relevance_score=0.0),
+        _cand(2, 0.89, None, relevance_score=0.0),
+        _cand(3, 0.88, None, relevance_score=0.0),
         _cand(4, 0.50, "allyship"),
     ]
     result = diversify(candidates, limit=3)
     assert [r.circle_id for r in result] == [1, 2, 3]
-    # Adjusted scores equal base scores — no null-topic penalty.
     assert all(abs(r.adjusted_score - r.base_score) < 1e-12 for r in result)
 
 
 def test_conditional_top_five_cap_defers_third_same_topic() -> None:
     # Three strong negotiation Circles plus a slightly weaker alternative.
+    # Gap 0.13 <= 0.25, so third is deferred even without relevance priority.
     candidates = [
         _cand(10, 0.95, "negotiation"),
         _cand(11, 0.94, "negotiation"),
@@ -86,7 +96,6 @@ def test_conditional_top_five_cap_defers_third_same_topic() -> None:
     ]
     result = diversify(candidates, limit=5)
     first_five_ids = [r.circle_id for r in result]
-    # With 0.93 - 0.80 = 0.13 <= 0.25, the third negotiation is deferred.
     assert first_five_ids[:3] == [10, 11, 20]
     assert 12 in first_five_ids  # deferred, not discarded
     negotiation_in_top5 = sum(
@@ -95,12 +104,44 @@ def test_conditional_top_five_cap_defers_third_same_topic() -> None:
     assert negotiation_in_top5 <= 3
 
 
-def test_greater_than_025_exception_allows_third() -> None:
+def test_positive_relevance_blocks_gap_exception() -> None:
+    """A relevant different-topic alternative blocks the >0.25 gap bypass."""
     candidates = [
         _cand(10, 0.95, "negotiation"),
         _cand(11, 0.94, "negotiation"),
         _cand(12, 0.93, "negotiation"),
-        _cand(20, 0.60, "confidence"),  # 0.93 - 0.60 = 0.33 > 0.25
+        # Gap 0.33 > 0.25, but positive relevance must still win.
+        _cand(20, 0.60, "confidence", relevance_score=1.0),
+    ]
+    result = diversify(candidates, limit=4)
+    assert [r.circle_id for r in result] == [10, 11, 20, 12]
+
+
+def test_tag_match_relevance_counts_as_positive() -> None:
+    """Secondary-tag relevance (0.25) is enough to block the gap exception."""
+    candidates = [
+        _cand(10, 0.95, "negotiation"),
+        _cand(11, 0.94, "negotiation"),
+        _cand(12, 0.93, "negotiation"),
+        _cand(
+            38,
+            0.40,
+            "public-speaking",
+            relevance_score=0.25,
+            relevance_source="tag",
+        ),
+    ]
+    result = diversify(candidates, limit=4)
+    assert [r.circle_id for r in result] == [10, 11, 38, 12]
+
+
+def test_zero_relevance_does_not_block_gap_exception() -> None:
+    """Unrelated Circles (relevance 0) do not trigger the new priority."""
+    candidates = [
+        _cand(10, 0.95, "negotiation"),
+        _cand(11, 0.94, "negotiation"),
+        _cand(12, 0.93, "negotiation"),
+        _cand(20, 0.60, "confidence", relevance_score=0.0),  # 0.93-0.60=0.33 > 0.25
     ]
     result = diversify(candidates, limit=4)
     assert [r.circle_id for r in result] == [10, 11, 12, 20]
@@ -111,23 +152,56 @@ def test_exactly_025_does_not_trigger_exception() -> None:
         _cand(10, 0.95, "negotiation"),
         _cand(11, 0.94, "negotiation"),
         _cand(12, 0.90, "negotiation"),
-        _cand(20, 0.65, "confidence"),  # 0.90 - 0.65 = 0.25 exactly
+        # Exact 0.25 gap + zero relevance → defer third negotiation.
+        _cand(20, 0.65, "confidence", relevance_score=0.0),
     ]
     result = diversify(candidates, limit=4)
     assert result[2].circle_id == 20
     assert result[3].circle_id == 12
 
 
-def test_cap_relaxed_after_first_five() -> None:
-    # Alternatives stay within the 0.25 exception margin so the top-five cap
-    # defers extra negotiation picks; after position 5 the cap no longer applies.
+def test_exhausted_topic_cap_is_not_a_viable_alternative() -> None:
+    """A different-topic Circle that would itself exceed the cap is not viable."""
     candidates = [
         _cand(1, 1.00, "negotiation"),
         _cand(2, 0.99, "negotiation"),
-        _cand(3, 0.90, "confidence"),
-        _cand(4, 0.89, "allyship"),
-        _cand(5, 0.88, "leadership-skills"),
-        _cand(6, 0.97, "negotiation"),  # 0.97 - 0.90 = 0.07 <= 0.25 → deferred in top 5
+        _cand(3, 0.98, "confidence"),
+        _cand(4, 0.97, "confidence"),
+        # Third negotiation: only remaining "alternative" is a third confidence,
+        # which also exceeds the cap, so the gap exception may apply.
+        _cand(5, 0.96, "negotiation"),
+        _cand(6, 0.50, "confidence", relevance_score=1.0),
+    ]
+    result = diversify(candidates, limit=5)
+    ids = [r.circle_id for r in result]
+    # Greedy interleaves topics via the same-topic penalty:
+    # 1 (neg), 3 (conf), 2 (neg), 4 (conf).
+    assert ids[:4] == [1, 3, 2, 4]
+    # Circle 6 would be a third confidence → not a viable positively relevant alt.
+    # Circle 5 may then use the gap exception (0.96 - 0.50 = 0.46 > 0.25).
+    assert ids[4] == 5
+    assert 6 not in ids[:5]
+
+
+def test_gap_exception_when_no_positive_relevance_alternative() -> None:
+    candidates = [
+        _cand(10, 0.95, "negotiation"),
+        _cand(11, 0.94, "negotiation"),
+        _cand(12, 0.93, "negotiation"),
+        _cand(20, 0.60, "confidence", relevance_score=0.0),
+    ]
+    result = diversify(candidates, limit=4)
+    assert [r.circle_id for r in result] == [10, 11, 12, 20]
+
+
+def test_cap_relaxed_after_first_five() -> None:
+    candidates = [
+        _cand(1, 1.00, "negotiation"),
+        _cand(2, 0.99, "negotiation"),
+        _cand(3, 0.90, "confidence", relevance_score=0.0),
+        _cand(4, 0.89, "allyship", relevance_score=0.0),
+        _cand(5, 0.88, "leadership-skills", relevance_score=0.0),
+        _cand(6, 0.97, "negotiation"),
         _cand(7, 0.96, "negotiation"),
         _cand(8, 0.95, "negotiation"),
     ]
@@ -140,7 +214,6 @@ def test_cap_relaxed_after_first_five() -> None:
     ]
     assert len(top5_negotiation) == 2
     assert set(top5_ids) == {1, 2, 3, 4, 5}
-    # Positions 6–8 absorb the deferred negotiation Circles.
     assert [r.circle_id for r in result[5:]] == [6, 7, 8]
 
 
@@ -200,3 +273,15 @@ def test_does_not_mutate_input_candidates() -> None:
     original_scores = [c.base_score for c in candidates]
     diversify(candidates, limit=2)
     assert [c.base_score for c in candidates] == original_scores
+
+
+def test_relevance_priority_with_input_order_independence() -> None:
+    candidates = [
+        _cand(12, 0.93, "negotiation"),
+        _cand(20, 0.60, "confidence", relevance_score=1.0),
+        _cand(10, 0.95, "negotiation"),
+        _cand(11, 0.94, "negotiation"),
+    ]
+    forward = [r.circle_id for r in diversify(candidates, limit=4)]
+    reverse = [r.circle_id for r in diversify(list(reversed(candidates)), limit=4)]
+    assert forward == reverse == [10, 11, 20, 12]
