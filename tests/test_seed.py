@@ -9,8 +9,9 @@ import pytest
 from app.database import create_db_engine
 from app.models import Activity, Circle, CircleTag, Membership, Topic, User, UserInterest
 from app.seed import SeedValidationError, seed_database
-from sqlalchemy import func, select
+from sqlalchemy import func, select, text
 from sqlalchemy.engine import Engine
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from tests.conftest import read_json, write_json
@@ -359,6 +360,49 @@ def test_failed_refresh_preserves_previous_dataset(
         assert cold_after is not None
         assert after == before
         assert cold_after.first_name == cold_name
+    engine.dispose()
+
+
+def test_mid_import_unique_constraint_rolls_back(
+    tmp_db_url: str, mutable_fixture_dir: Path, fixture_data_dir: Path
+) -> None:
+    """DB uniqueness failures mid-import must not replace a prior valid seed."""
+    seed_database(database_url=tmp_db_url, data_dir=fixture_data_dir)
+
+    engine = create_db_engine(tmp_db_url)
+    with Session(engine) as session:
+        before = _counts(session)
+        cold = session.get(User, 42)
+        circle_5 = session.get(Circle, 5)
+        assert cold is not None
+        assert circle_5 is not None
+        cold_name = cold.first_name
+        circle_5_slug = circle_5.slug
+        circle_5_members = circle_5.member_count
+    engine.dispose()
+
+    # Pass fixture validation, then fail on circles.slug uniqueness during import.
+    circles_path = mutable_fixture_dir / "circles.json"
+    circles = read_json(circles_path)
+    assert circles[0]["id"] != circles[1]["id"]
+    circles[1]["slug"] = circles[0]["slug"]
+    write_json(circles_path, circles)
+
+    with pytest.raises(IntegrityError):
+        seed_database(database_url=tmp_db_url, data_dir=mutable_fixture_dir)
+
+    engine = create_db_engine(tmp_db_url)
+    with Session(engine) as session:
+        after = _counts(session)
+        cold_after = session.get(User, 42)
+        circle_5_after = session.get(Circle, 5)
+        assert after == before
+        assert cold_after is not None
+        assert cold_after.first_name == cold_name
+        assert circle_5_after is not None
+        assert circle_5_after.slug == circle_5_slug
+        assert circle_5_after.member_count == circle_5_members
+        assert session.scalar(text("PRAGMA foreign_keys")) == 1
     engine.dispose()
 
 
