@@ -219,6 +219,25 @@ def test_health_returns_503_on_uninitialized_database(tmp_path: Path) -> None:
         application.state.engine.dispose()
 
 
+def test_health_returns_503_on_schema_only_database(tmp_path: Path) -> None:
+    """Complete schema without seed data must not report ready."""
+    db_url = f"sqlite:///{tmp_path / 'schema_only.db'}"
+    engine = create_db_engine(db_url)
+    try:
+        init_db(engine)
+    finally:
+        engine.dispose()
+
+    application = create_app(database_url=db_url)
+    try:
+        with TestClient(application) as client:
+            response = client.get("/health")
+            assert response.status_code == 503
+            assert response.json() == {"detail": "Database is not ready"}
+    finally:
+        application.state.engine.dispose()
+
+
 # ---------------------------------------------------------------------------
 # Application isolation
 # ---------------------------------------------------------------------------

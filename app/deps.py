@@ -51,14 +51,21 @@ def get_db(request: Request) -> Generator[Session, None, None]:
 
 
 def check_database_ready(session: Session) -> bool:
-    """Return True when the DB is reachable and has the required schema.
+    """Return True when the DB is reachable, schematized, and minimally seeded.
 
-    Performs a lightweight, read-only check. Does not create tables or seed
-    data. An empty SQLite file without application tables is not ready.
+    Performs lightweight, read-only checks. Does not create tables or seed data.
+    Ready requires connectivity, all required tables, and at least one user,
+    Circle, and topic. Schema-only or inaccessible databases are not ready.
     """
     try:
         session.execute(text("SELECT 1"))
         existing = set(inspect(session.get_bind()).get_table_names())
+        if not REQUIRED_TABLES.issubset(existing):
+            return False
+        # Existence probes — avoid full COUNT(*) over seeded tables.
+        for table in ("users", "circles", "topics"):
+            if session.execute(text(f"SELECT 1 FROM {table} LIMIT 1")).first() is None:
+                return False
     except Exception:
         return False
-    return REQUIRED_TABLES.issubset(existing)
+    return True
