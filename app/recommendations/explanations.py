@@ -81,7 +81,7 @@ def _activity_supporting_clause(circle: CircleExplanationContext) -> str | None:
 
     if feed and chat:
         if recent:
-            return "has recent member activity"
+            return "had recent member activity in the available snapshot"
         return "had feed posts and chat activity in the available community snapshot"
     if feed:
         return "has feed discussions in the available community snapshot"
@@ -182,7 +182,7 @@ def generate_explanation(
             # Prefer snapshot-aware wording for cold-start / unmatched Circles.
             if "recent member activity" in clause:
                 return (
-                    f"This Circle focuses on {primary} and has recent community "
+                    f"This Circle focuses on {primary} and had recent community "
                     f"activity in the available snapshot."
                 )
             return f"This Circle focuses on {primary} and {clause}."

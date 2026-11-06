@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
-from app.deps import reset_engine
+from app.database import create_db_engine, init_db
 from app.main import create_app
 from app.models import Circle, Membership, User
 from app.recommendations.constants import SNAPSHOT_REFERENCE
@@ -14,8 +15,9 @@ from app.recommendations.eligibility import is_dormant
 from app.recommendations.service import recommend_circles
 from app.schemas import CircleRecommendationsResponse
 from app.seed import seed_database
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from sqlalchemy import event, select
+from sqlalchemy import event, select, text
 from sqlalchemy.orm import Session, selectinload
 
 FORBIDDEN_JSON_KEYS = {
@@ -37,13 +39,19 @@ FORBIDDEN_JSON_KEYS = {
 
 
 @pytest.fixture
-def api_client(tmp_db_url: str, fixture_data_dir: Path) -> Iterator[TestClient]:
-    """Test client bound to an isolated, seeded temporary SQLite database."""
+def api_app(tmp_db_url: str, fixture_data_dir: Path) -> Iterator[FastAPI]:
+    """Seeded FastAPI application whose engine is bound to a temp database."""
     seed_database(database_url=tmp_db_url, data_dir=fixture_data_dir)
     application = create_app(database_url=tmp_db_url)
-    with TestClient(application) as client:
+    yield application
+    application.state.engine.dispose()
+
+
+@pytest.fixture
+def api_client(api_app: FastAPI) -> Iterator[TestClient]:
+    """Test client bound to an isolated, seeded temporary SQLite database."""
+    with TestClient(api_app) as client:
         yield client
-    reset_engine()
 
 
 def _recommendations_url(user_id: int | str, *, limit: int | str | None = None) -> str:
@@ -77,6 +85,11 @@ def _assert_card_matches_circle(card: dict, circle: Circle) -> None:
     # No raw kebab-case topic slugs as whole words in the explanation.
     for token in card["reason"].replace(".", " ").split():
         assert not (token.count("-") >= 1 and token.replace("-", "").isalpha())
+
+
+def _normalize_sql(statement: str) -> str:
+    """Collapse whitespace and lowercase SQL for robust substring checks."""
+    return re.sub(r"\s+", " ", statement).strip().lower()
 
 
 # ---------------------------------------------------------------------------
@@ -126,60 +139,49 @@ def test_unknown_user_returns_404(api_client: TestClient) -> None:
     assert response.json() == {"detail": "User not found"}
 
 
-def test_user_with_zero_eligible_circles_returns_empty_array(
-    tmp_db_url: str,
-    fixture_data_dir: Path,
-) -> None:
+def test_user_with_zero_eligible_circles_returns_empty_array(api_app: FastAPI) -> None:
     """Construct a member of every eligible Circle, then expect an empty list."""
-    from app.deps import get_engine
-
-    seed_database(database_url=tmp_db_url, data_dir=fixture_data_dir)
-    application = create_app(database_url=tmp_db_url)
-
-    try:
-        with Session(get_engine()) as session:
-            assert session.get(User, 1) is not None
-            circles = session.scalars(
-                select(Circle).options(selectinload(Circle.primary_topic))
+    with Session(api_app.state.engine) as session:
+        assert session.get(User, 1) is not None
+        circles = session.scalars(
+            select(Circle).options(selectinload(Circle.primary_topic))
+        ).all()
+        existing = set(
+            session.scalars(
+                select(Membership.circle_id).where(Membership.user_id == 1)
             ).all()
-            existing = set(
-                session.scalars(
-                    select(Membership.circle_id).where(Membership.user_id == 1)
-                ).all()
-            )
-            for circle in circles:
-                if circle.access != "public":
-                    continue
-                if (
-                    circle.max_members is not None
-                    and circle.member_count >= circle.max_members
-                ):
-                    continue
-                if is_dormant(
-                    feed_posts_30d=circle.feed_posts_30d,
-                    chat_messages_30d=circle.chat_messages_30d,
-                    last_activity_at=circle.last_activity_at,
-                ):
-                    continue
-                if circle.id in existing:
-                    continue
-                session.add(
-                    Membership(
-                        user_id=1,
-                        circle_id=circle.id,
-                        role="member",
-                        joined_at=SNAPSHOT_REFERENCE,
-                    )
+        )
+        for circle in circles:
+            if circle.access != "public":
+                continue
+            if (
+                circle.max_members is not None
+                and circle.member_count >= circle.max_members
+            ):
+                continue
+            if is_dormant(
+                feed_posts_30d=circle.feed_posts_30d,
+                chat_messages_30d=circle.chat_messages_30d,
+                last_activity_at=circle.last_activity_at,
+            ):
+                continue
+            if circle.id in existing:
+                continue
+            session.add(
+                Membership(
+                    user_id=1,
+                    circle_id=circle.id,
+                    role="member",
+                    joined_at=SNAPSHOT_REFERENCE,
                 )
-            session.commit()
+            )
+        session.commit()
 
-        with TestClient(application) as client:
-            response = client.get(_recommendations_url(1))
-            assert response.status_code == 200
-            body = response.json()
-            assert body == {"user_id": 1, "recommendations": []}
-    finally:
-        reset_engine()
+    with TestClient(api_app) as client:
+        response = client.get(_recommendations_url(1))
+        assert response.status_code == 200
+        body = response.json()
+        assert body == {"user_id": 1, "recommendations": []}
 
 
 def test_health_docs_and_openapi(api_client: TestClient) -> None:
@@ -197,12 +199,108 @@ def test_health_docs_and_openapi(api_client: TestClient) -> None:
     assert "/health" in schema["paths"]
 
 
+def test_health_returns_503_on_uninitialized_database(tmp_path: Path) -> None:
+    """Fresh SQLite file without schema must not report ready."""
+    db_url = f"sqlite:///{tmp_path / 'uninitialized.db'}"
+    # Touch an empty SQLite file via the engine without creating tables.
+    engine = create_db_engine(db_url)
+    with engine.connect() as conn:
+        conn.execute(text("SELECT 1"))
+        conn.commit()
+    engine.dispose()
+
+    application = create_app(database_url=db_url)
+    try:
+        with TestClient(application) as client:
+            response = client.get("/health")
+            assert response.status_code == 503
+            assert response.json() == {"detail": "Database is not ready"}
+    finally:
+        application.state.engine.dispose()
+
+
+# ---------------------------------------------------------------------------
+# Application isolation
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("construct_order", ["a_then_b", "b_then_a"])
+def test_apps_use_independent_databases(
+    tmp_path: Path,
+    fixture_data_dir: Path,
+    construct_order: str,
+) -> None:
+    """Two create_app instances must keep distinct engines after both exist."""
+    db_a = f"sqlite:///{tmp_path / 'iso_a.db'}"
+    db_b = f"sqlite:///{tmp_path / 'iso_b.db'}"
+
+    seed_database(database_url=db_a, data_dir=fixture_data_dir)
+
+    # Database B: schema only, plus a single user that does not exist in A.
+    engine_b_setup = create_db_engine(db_b)
+    try:
+        init_db(engine_b_setup)
+        with Session(engine_b_setup) as session:
+            session.add(
+                User(
+                    id=9001,
+                    first_name="Iso",
+                    last_name="Only",
+                    has_photo=False,
+                    bio=None,
+                    job_title=None,
+                    company=None,
+                    industry=None,
+                    location=None,
+                    joined_at=SNAPSHOT_REFERENCE,
+                    profile_completeness=0.0,
+                )
+            )
+            session.commit()
+    finally:
+        engine_b_setup.dispose()
+
+    if construct_order == "a_then_b":
+        app_a = create_app(database_url=db_a)
+        app_b = create_app(database_url=db_b)
+    else:
+        app_b = create_app(database_url=db_b)
+        app_a = create_app(database_url=db_a)
+
+    try:
+        assert app_a.state.engine is not app_b.state.engine
+        with (
+            TestClient(app_a) as client_a,
+            TestClient(app_b) as client_b,
+        ):
+            # A still serves the seeded assessment dataset.
+            response_a = client_a.get(_recommendations_url(7, limit=1))
+            assert response_a.status_code == 200
+            assert response_a.json()["user_id"] == 7
+            assert response_a.json()["recommendations"]
+
+            # B does not have user 7, but does have the custom user.
+            assert client_b.get(_recommendations_url(7)).status_code == 404
+            response_b = client_b.get(_recommendations_url(9001))
+            assert response_b.status_code == 200
+            assert response_b.json() == {
+                "user_id": 9001,
+                "recommendations": [],
+            }
+
+            # Cross-check: A still does not know about B's custom user.
+            assert client_a.get(_recommendations_url(9001)).status_code == 404
+    finally:
+        app_a.state.engine.dispose()
+        app_b.state.engine.dispose()
+
+
 # ---------------------------------------------------------------------------
 # Response contract
 # ---------------------------------------------------------------------------
 
 
-def test_response_contract_and_ordering(api_client: TestClient, tmp_db_url: str) -> None:
+def test_response_contract_and_ordering(api_app: FastAPI, api_client: TestClient) -> None:
     response = api_client.get(_recommendations_url(15, limit=5))
     assert response.status_code == 200
     body = response.json()
@@ -216,10 +314,7 @@ def test_response_contract_and_ordering(api_client: TestClient, tmp_db_url: str)
     circle_ids = [card.circle_id for card in parsed.recommendations]
     assert len(circle_ids) == len(set(circle_ids))
 
-    # Ordering must match the recommendation service exactly.
-    from app.deps import get_engine
-
-    with Session(get_engine()) as session:
+    with Session(api_app.state.engine) as session:
         service_order = [
             rec.circle_id for rec in recommend_circles(session, 15, limit=5)
         ]
@@ -254,53 +349,45 @@ def test_null_optional_fields_preserved(api_client: TestClient) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_selected_circle_metadata_uses_batched_query(
-    tmp_db_url: str,
-    fixture_data_dir: Path,
-) -> None:
-    seed_database(database_url=tmp_db_url, data_dir=fixture_data_dir)
-    application = create_app(database_url=tmp_db_url)
-
-    from app.deps import get_engine
-
-    engine = get_engine()
+def test_selected_circle_metadata_uses_batched_query(api_app: FastAPI) -> None:
+    engine = api_app.state.engine
     statements: list[str] = []
 
     def before_cursor_execute(
         conn, cursor, statement, parameters, context, executemany
-    ) -> None:  # noqa: ANN001
+    ) -> None:  # noqa: ANN001, ARG001
         statements.append(str(statement))
 
     event.listen(engine, "before_cursor_execute", before_cursor_execute)
     try:
-        with TestClient(application) as client:
+        with TestClient(api_app) as client:
             response = client.get(_recommendations_url(7, limit=5))
             assert response.status_code == 200
             assert len(response.json()["recommendations"]) == 5
     finally:
         event.remove(engine, "before_cursor_execute", before_cursor_execute)
-        reset_engine()
 
-    circle_id_lookups = [
+    normalized = [_normalize_sql(sql) for sql in statements]
+    recommendation_count = 5
+
+    # Selected Circle metadata must be fetched through an IN batch.
+    circle_batch_queries = [
         sql
-        for sql in statements
-        if "FROM circles" in sql.lower() and "WHERE circles.id IN" in sql.lower().replace("\n", " ")
+        for sql in normalized
+        if "from circles" in sql and re.search(r"\bcircles\.id in\b", sql)
     ]
-    # Fallback: SQLAlchemy may render IN slightly differently.
-    if not circle_id_lookups:
-        circle_id_lookups = [
-            sql
-            for sql in statements
-            if "circles" in sql.lower() and " in (" in sql.lower()
-        ]
-    assert len(circle_id_lookups) >= 1
-    # Must not issue one SELECT-by-primary-key per recommended Circle.
+    assert len(circle_batch_queries) >= 1
+
+    # Metadata query count must not grow one-for-one with recommendation count.
+    assert len(circle_batch_queries) < recommendation_count
+
+    # No per-recommendation primary-key SELECT against circles.
     per_id_gets = [
         sql
-        for sql in statements
-        if "FROM circles" in sql.lower() and "circles.id =" in sql.lower().replace("\n", " ")
+        for sql in normalized
+        if "from circles" in sql and re.search(r"\bcircles\.id\s*=\s*", sql)
     ]
-    assert len(per_id_gets) == 0
+    assert per_id_gets == []
 
 
 # ---------------------------------------------------------------------------
@@ -322,6 +409,10 @@ def test_planted_user_7_obvious_matches(api_client: TestClient) -> None:
     assert "interest" in reason_5
     assert "public speaking" in reason_6
     assert "interest" in reason_6
+    for circle_id in (5, 6):
+        reason = by_id[circle_id]["reason"].lower()
+        if "recent" in reason:
+            assert "snapshot" in reason
 
 
 def test_planted_user_15_near_duplicate_cap(api_client: TestClient) -> None:
@@ -332,9 +423,8 @@ def test_planted_user_15_near_duplicate_cap(api_client: TestClient) -> None:
     negotiation_dupes = [cid for cid in ids if cid in {10, 11, 12}]
     assert len(negotiation_dupes) <= 2
 
-    topics = [card["topic"] for card in body["recommendations"]]
-    assert "confidence" in topics or any(
-        "confidence" in card["reason"].lower() or "confidence" == card["topic"]
+    assert "confidence" in [card["topic"] for card in body["recommendations"]] or any(
+        "confidence" in card["reason"].lower() or card["topic"] == "confidence"
         for card in body["recommendations"]
     )
 
@@ -343,6 +433,8 @@ def test_planted_user_15_near_duplicate_cap(api_client: TestClient) -> None:
         if card["topic"] != "negotiation" and "negotiation" in reason:
             # Tag-only style should not over-claim primary focus.
             assert "matches your interest in negotiation" not in reason
+        if "recent" in reason:
+            assert "snapshot" in reason
 
 
 def test_planted_user_23_full_inactive_traps(api_client: TestClient) -> None:
@@ -360,6 +452,10 @@ def test_planted_user_23_full_inactive_traps(api_client: TestClient) -> None:
     assert "getting promoted" in reason
     assert "join immediately" not in reason
     assert "open to new members" not in reason
+    assert "recent member activity" in reason
+    assert "available snapshot" in reason
+    assert "has recent member activity" not in reason
+    assert "right now" not in reason
 
 
 def test_planted_user_42_cold_start(api_client: TestClient) -> None:
@@ -375,6 +471,8 @@ def test_planted_user_42_cold_start(api_client: TestClient) -> None:
         assert "industry" not in reason
         assert "job title" not in reason
         assert "nearby" not in reason
+        if "recent" in reason:
+            assert "snapshot" in reason
 
     top = body["recommendations"][0]
     if top["topic"] is None:
@@ -387,11 +485,9 @@ def test_planted_user_42_cold_start(api_client: TestClient) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_all_users_api_validation(api_client: TestClient) -> None:
-    from app.deps import get_engine
-
+def test_all_users_api_validation(api_app: FastAPI, api_client: TestClient) -> None:
     limits = (1, 5, 10, 20)
-    with Session(get_engine()) as session:
+    with Session(api_app.state.engine) as session:
         user_ids = list(session.scalars(select(User.id).order_by(User.id)).all())
         assert len(user_ids) == 100
         circles = {
@@ -432,6 +528,8 @@ def test_all_users_api_validation(api_client: TestClient) -> None:
                 assert card.name
                 assert card.format in {"in_person", "virtual", "hybrid"}
                 assert card.join_policy in {"open", "request"}
+                if "recent" in card.reason.lower():
+                    assert "snapshot" in card.reason.lower()
 
                 circle = circles[card.circle_id]
                 assert circle.access == "public"
@@ -455,13 +553,11 @@ def test_all_users_api_validation(api_client: TestClient) -> None:
                 assert card.format == circle.format
                 assert card.join_policy == circle.join_policy
 
-            # Determinism: identical inputs yield identical responses.
             again = api_client.get(_recommendations_url(user_id, limit=limit))
             assert again.status_code == 200
             assert again.json() == body
 
-            # Consistency with the Phase 2 service ranking.
-            with Session(get_engine()) as session:
+            with Session(api_app.state.engine) as session:
                 service_ids = [
                     rec.circle_id
                     for rec in recommend_circles(session, user_id, limit=limit)

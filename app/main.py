@@ -2,25 +2,38 @@
 
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Path, Query, status
 from sqlalchemy.orm import Session
 
-from app.deps import check_database_ready, configure_engine, get_db
+from app.deps import (
+    build_engine,
+    build_session_factory,
+    check_database_ready,
+    get_db,
+)
 from app.recommendations.cards import build_recommendation_response
 from app.recommendations.service import UserNotFoundError, recommend_circles
 from app.schemas import CircleRecommendationsResponse, HealthResponse
 
 
 def create_app(*, database_url: str | None = None) -> FastAPI:
-    """Build a FastAPI app, optionally bound to a specific database URL.
+    """Build a FastAPI app with database resources bound to that instance.
 
     Does not seed the database. Seeding remains ``python -m app.seed``.
+    Each call creates an independent engine/session factory so concurrent app
+    instances do not share or overwrite each other's database binding.
     """
-    # Bind the process-level engine once at construction time. Tests pass an
-    # isolated temporary SQLite URL; production uses CIRCLES_DATABASE_URL.
-    configure_engine(database_url)
+    engine = build_engine(database_url)
+    session_factory = build_session_factory(engine)
+
+    @asynccontextmanager
+    async def lifespan(application: FastAPI) -> AsyncIterator[None]:
+        yield
+        application.state.engine.dispose()
 
     application = FastAPI(
         title="Lean In Circle Recommendations",
@@ -29,7 +42,10 @@ def create_app(*, database_url: str | None = None) -> FastAPI:
             "member-facing explanations."
         ),
         version="0.3.0",
+        lifespan=lifespan,
     )
+    application.state.engine = engine
+    application.state.session_factory = session_factory
     _register_routes(application)
     return application
 

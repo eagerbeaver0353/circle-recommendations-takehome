@@ -1,62 +1,49 @@
-"""FastAPI dependency wiring for request-scoped SQLAlchemy sessions."""
+"""FastAPI dependency wiring for per-application SQLAlchemy resources."""
 
 from __future__ import annotations
 
 from collections.abc import Generator
 
-from sqlalchemy import text
+from fastapi import Request
+from sqlalchemy import inspect, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.database import create_db_engine, create_session_factory
 
-# Process-level engine / session factory. Created once; not per request.
-_engine: Engine | None = None
-_session_factory: sessionmaker[Session] | None = None
+# Tables required for the assessment schema to be considered initialized.
+REQUIRED_TABLES: frozenset[str] = frozenset(
+    {
+        "topics",
+        "users",
+        "circles",
+        "user_interests",
+        "circle_tags",
+        "memberships",
+        "activity",
+    }
+)
 
 
-def get_engine() -> Engine:
-    """Return the shared application engine, creating it on first use."""
-    global _engine, _session_factory
-    if _engine is None:
-        _engine = create_db_engine()
-        _session_factory = create_session_factory(_engine)
-    return _engine
+def build_engine(database_url: str | None = None, *, echo: bool = False) -> Engine:
+    """Create a SQLAlchemy engine for one application instance."""
+    return create_db_engine(database_url, echo=echo)
 
 
-def get_session_factory() -> sessionmaker[Session]:
-    """Return the shared session factory bound to the application engine."""
-    get_engine()
-    assert _session_factory is not None
-    return _session_factory
+def build_session_factory(engine: Engine) -> sessionmaker[Session]:
+    """Create a session factory bound to *engine*."""
+    return create_session_factory(engine)
 
 
-def configure_engine(database_url: str | None = None, *, echo: bool = False) -> Engine:
-    """Replace the shared engine (used by tests and application factories)."""
-    global _engine, _session_factory
-    if _engine is not None:
-        _engine.dispose()
-    _engine = create_db_engine(database_url, echo=echo)
-    _session_factory = create_session_factory(_engine)
-    return _engine
-
-
-def reset_engine() -> None:
-    """Dispose and clear the shared engine (test teardown helper)."""
-    global _engine, _session_factory
-    if _engine is not None:
-        _engine.dispose()
-    _engine = None
-    _session_factory = None
-
-
-def get_db() -> Generator[Session, None, None]:
-    """Yield a request-scoped Session that is always closed.
+def get_db(request: Request) -> Generator[Session, None, None]:
+    """Yield a request-scoped Session from the current application's factory.
 
     Read-only recommendation requests do not commit. Callers that need writes
-    must commit explicitly inside the request handler.
+    must commit explicitly inside the request handler. The session is always
+    closed, including when the handler raises.
     """
-    session = get_session_factory()()
+    session_factory: sessionmaker[Session] = request.app.state.session_factory
+    session = session_factory()
     try:
         yield session
     finally:
@@ -64,9 +51,14 @@ def get_db() -> Generator[Session, None, None]:
 
 
 def check_database_ready(session: Session) -> bool:
-    """Return True when a simple round-trip against the database succeeds."""
+    """Return True when the DB is reachable and has the required schema.
+
+    Performs a lightweight, read-only check. Does not create tables or seed
+    data. An empty SQLite file without application tables is not ready.
+    """
     try:
         session.execute(text("SELECT 1"))
-        return True
+        existing = set(inspect(session.get_bind()).get_table_names())
     except Exception:
         return False
+    return REQUIRED_TABLES.issubset(existing)

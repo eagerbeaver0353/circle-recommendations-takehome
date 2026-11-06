@@ -148,6 +148,9 @@ def test_explicit_primary_topic_match() -> None:
     assert "getting promoted" in text.lower()
     assert "interest" in text.lower()
     assert "recent member activity" in text.lower()
+    assert "available snapshot" in text.lower()
+    assert "right now" not in text.lower()
+    assert "is active" not in text.lower()
 
 
 def test_explicit_tag_only_match() -> None:
@@ -223,7 +226,9 @@ def test_cold_start_known_primary_topic() -> None:
     assert "leadership skills" in text.lower()
     assert "focuses on" in text.lower()
     assert "your interest" not in text.lower()
-    assert "available snapshot" in text.lower() or "community snapshot" in text.lower()
+    assert "available snapshot" in text.lower()
+    assert "has recent community activity" not in text.lower()
+    assert "had recent community activity" in text.lower()
 
 
 def test_cold_start_no_primary_topic() -> None:
