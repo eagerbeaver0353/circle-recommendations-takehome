@@ -32,3 +32,9 @@ data/*.db
 .vscode/
 *.swp
 *~
+.DS_Store
+**/.DS_Store
+
+# Docker local overrides (if added later)
+compose.override.yaml
+compose.override.yml

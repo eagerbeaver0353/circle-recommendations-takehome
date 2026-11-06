@@ -1,0 +1,14 @@
+# Single-service Compose setup for local evaluation.
+# SQLite lives on the named volume at /app/state so JSON fixtures under /app/data stay visible.
+services:
+  api:
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      CIRCLES_DATABASE_URL: sqlite:////app/state/circles.db
+    volumes:
+      - circles-state:/app/state
+
+volumes:
+  circles-state:
