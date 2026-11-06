@@ -1,0 +1,1612 @@
+[
+  {
+    "id": 1,
+    "first_name": "Fatima",
+    "last_name": "Vargas",
+    "has_photo": true,
+    "bio": "Passionate about mentoring the next generation of women leaders.",
+    "job_title": "Sales Manager",
+    "company": "Harbor Financial",
+    "industry": "Education",
+    "location": "New York, NY",
+    "joined_at": "2024-11-09T00:00:00.000Z",
+    "topic_interests": [
+      "work-life-integration"
+    ],
+    "profile_completeness": 1
+  },
+  {
+    "id": 2,
+    "first_name": "Rosa",
+    "last_name": "Adeyemi",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Nonprofit Director",
+    "company": "Willow Education",
+    "industry": "Technology",
+    "location": "Toronto, ON",
+    "joined_at": "2025-09-23T00:00:00.000Z",
+    "topic_interests": [
+      "negotiation",
+      "imposter-syndrome",
+      "career-breaks"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 3,
+    "first_name": "Carmen",
+    "last_name": "Vega",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Strategy Lead",
+    "company": "Brightwave",
+    "industry": "Healthcare",
+    "location": null,
+    "joined_at": "2025-06-09T00:00:00.000Z",
+    "topic_interests": [
+      "career-breaks"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 4,
+    "first_name": "Jada",
+    "last_name": "Ellis",
+    "has_photo": false,
+    "bio": "Returning to work after a career break and finding my footing.",
+    "job_title": "Strategy Lead",
+    "company": null,
+    "industry": null,
+    "location": "New York, NY",
+    "joined_at": "2025-04-16T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 5,
+    "first_name": "Renata",
+    "last_name": "Jensen",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Account Executive",
+    "company": "Willow Education",
+    "industry": "Finance",
+    "location": "Toronto, ON",
+    "joined_at": "2025-10-24T00:00:00.000Z",
+    "topic_interests": [
+      "allyship"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 6,
+    "first_name": "Yara",
+    "last_name": "Romano",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Engineering Manager",
+    "company": null,
+    "industry": "Manufacturing",
+    "location": "Toronto, ON",
+    "joined_at": "2025-12-11T00:00:00.000Z",
+    "topic_interests": [
+      "communication"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 7,
+    "first_name": "Priya",
+    "last_name": "Sharma",
+    "has_photo": true,
+    "bio": "Senior IC eyeing my first leadership role. Working on executive presence.",
+    "job_title": "Software Engineer",
+    "company": "Meridian Labs",
+    "industry": "Technology",
+    "location": "Seattle, WA",
+    "joined_at": "2026-07-27T00:00:00.000Z",
+    "topic_interests": [
+      "leadership-skills",
+      "public-speaking"
+    ],
+    "profile_completeness": 1
+  },
+  {
+    "id": 8,
+    "first_name": "Mei",
+    "last_name": "Costa",
+    "has_photo": false,
+    "bio": null,
+    "job_title": "Recruiter",
+    "company": null,
+    "industry": "Retail",
+    "location": "Chicago, IL",
+    "joined_at": "2024-10-04T00:00:00.000Z",
+    "topic_interests": [
+      "giving-feedback",
+      "sponsorship-mentorship",
+      "managing-a-team"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 9,
+    "first_name": "Elena",
+    "last_name": "Osei",
+    "has_photo": false,
+    "bio": null,
+    "job_title": "Engineering Manager",
+    "company": null,
+    "industry": "Healthcare",
+    "location": "New York, NY",
+    "joined_at": "2025-09-12T00:00:00.000Z",
+    "topic_interests": [
+      "giving-feedback"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 10,
+    "first_name": "Bianca",
+    "last_name": "Diallo",
+    "has_photo": true,
+    "bio": null,
+    "job_title": null,
+    "company": null,
+    "industry": "Healthcare",
+    "location": "New York, NY",
+    "joined_at": "2025-04-10T00:00:00.000Z",
+    "topic_interests": [
+      "public-speaking",
+      "sponsorship-mentorship"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 11,
+    "first_name": "Imani",
+    "last_name": "Park",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Strategy Lead",
+    "company": "Lumen",
+    "industry": "Healthcare",
+    "location": "Toronto, ON",
+    "joined_at": "2025-07-06T00:00:00.000Z",
+    "topic_interests": [
+      "getting-promoted",
+      "allyship",
+      "managing-up"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 12,
+    "first_name": "Paloma",
+    "last_name": "Mendez",
+    "has_photo": false,
+    "bio": "Career changer, ex-consultant, now in tech.",
+    "job_title": "Engineering Manager",
+    "company": null,
+    "industry": "Education",
+    "location": null,
+    "joined_at": "2026-04-25T00:00:00.000Z",
+    "topic_interests": [
+      "leadership-skills",
+      "resilience",
+      "negotiation"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 13,
+    "first_name": "Ximena",
+    "last_name": "Cruz",
+    "has_photo": true,
+    "bio": null,
+    "job_title": null,
+    "company": "Vantage",
+    "industry": "Nonprofit",
+    "location": null,
+    "joined_at": "2025-04-27T00:00:00.000Z",
+    "topic_interests": [
+      "communication",
+      "networking",
+      "stress-burnout"
+    ],
+    "profile_completeness": 0.4
+  },
+  {
+    "id": 14,
+    "first_name": "Ingrid",
+    "last_name": "Andersson",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Research Scientist",
+    "company": "Vantage",
+    "industry": "Finance",
+    "location": "New York, NY",
+    "joined_at": "2026-01-31T00:00:00.000Z",
+    "topic_interests": [
+      "difficult-conversations"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 15,
+    "first_name": "Nadia",
+    "last_name": "Haddad",
+    "has_photo": true,
+    "bio": "Prepping for a big comp conversation and want to build confidence around it.",
+    "job_title": "Account Executive",
+    "company": "Vantage",
+    "industry": "Technology",
+    "location": "Chicago, IL",
+    "joined_at": "2026-07-02T00:00:00.000Z",
+    "topic_interests": [
+      "negotiation",
+      "confidence"
+    ],
+    "profile_completeness": 1
+  },
+  {
+    "id": 16,
+    "first_name": "Grace",
+    "last_name": "Bennett",
+    "has_photo": true,
+    "bio": "Building my leadership toolkit one conversation at a time.",
+    "job_title": null,
+    "company": "Vantage",
+    "industry": null,
+    "location": "Seattle, WA",
+    "joined_at": "2026-05-12T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 17,
+    "first_name": "Tara",
+    "last_name": "Mbeki",
+    "has_photo": false,
+    "bio": null,
+    "job_title": null,
+    "company": "Brightwave",
+    "industry": null,
+    "location": null,
+    "joined_at": "2024-11-06T00:00:00.000Z",
+    "topic_interests": [
+      "gender-bias",
+      "work-life-integration",
+      "being-the-only-one"
+    ],
+    "profile_completeness": 0.2
+  },
+  {
+    "id": 18,
+    "first_name": "Halle",
+    "last_name": "Kaur",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Product Manager",
+    "company": "Harbor Financial",
+    "industry": "Media",
+    "location": "Denver, CO",
+    "joined_at": "2025-02-26T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 19,
+    "first_name": "Olga",
+    "last_name": "Haddad",
+    "has_photo": false,
+    "bio": null,
+    "job_title": null,
+    "company": "Meridian Labs",
+    "industry": "Media",
+    "location": null,
+    "joined_at": "2025-11-27T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.2
+  },
+  {
+    "id": 20,
+    "first_name": "Wren",
+    "last_name": "Rossi",
+    "has_photo": true,
+    "bio": "Returning to work after a career break and finding my footing.",
+    "job_title": "Research Scientist",
+    "company": "Acme Health",
+    "industry": null,
+    "location": "Denver, CO",
+    "joined_at": "2026-03-05T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 1
+  },
+  {
+    "id": 21,
+    "first_name": "Devi",
+    "last_name": "Obrien",
+    "has_photo": true,
+    "bio": "Returning to work after a career break and finding my footing.",
+    "job_title": "Consultant",
+    "company": null,
+    "industry": null,
+    "location": "Denver, CO",
+    "joined_at": "2026-01-08T00:00:00.000Z",
+    "topic_interests": [
+      "allyship",
+      "negotiation"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 22,
+    "first_name": "Naomi",
+    "last_name": "Chen",
+    "has_photo": false,
+    "bio": "Career changer, ex-consultant, now in tech.",
+    "job_title": "Strategy Lead",
+    "company": "Acme Health",
+    "industry": "Education",
+    "location": null,
+    "joined_at": "2025-03-01T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 23,
+    "first_name": "Grace",
+    "last_name": "Bennett",
+    "has_photo": true,
+    "bio": "Been in-role two years and ready for the next level.",
+    "job_title": "Marketing Lead",
+    "company": "Brightwave",
+    "industry": "Media",
+    "location": "Atlanta, GA",
+    "joined_at": "2024-12-02T00:00:00.000Z",
+    "topic_interests": [
+      "getting-promoted"
+    ],
+    "profile_completeness": 1
+  },
+  {
+    "id": 24,
+    "first_name": "Nina",
+    "last_name": "Nguyen",
+    "has_photo": true,
+    "bio": "Career changer, ex-consultant, now in tech.",
+    "job_title": "Research Scientist",
+    "company": null,
+    "industry": null,
+    "location": "Chicago, IL",
+    "joined_at": "2025-04-07T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 25,
+    "first_name": "Gita",
+    "last_name": "Tanaka",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Finance Manager",
+    "company": "Meridian Labs",
+    "industry": "Media",
+    "location": null,
+    "joined_at": "2024-12-19T00:00:00.000Z",
+    "topic_interests": [
+      "career-breaks"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 26,
+    "first_name": "Noor",
+    "last_name": "Weaver",
+    "has_photo": false,
+    "bio": null,
+    "job_title": "Consultant",
+    "company": "Vantage",
+    "industry": null,
+    "location": "Seattle, WA",
+    "joined_at": "2025-02-09T00:00:00.000Z",
+    "topic_interests": [
+      "imposter-syndrome",
+      "difficult-conversations",
+      "working-motherhood"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 27,
+    "first_name": "Valeria",
+    "last_name": "Fischer",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Strategy Lead",
+    "company": null,
+    "industry": null,
+    "location": null,
+    "joined_at": "2026-01-28T00:00:00.000Z",
+    "topic_interests": [
+      "sponsorship-mentorship"
+    ],
+    "profile_completeness": 0.4
+  },
+  {
+    "id": 28,
+    "first_name": "Camila",
+    "last_name": "Cohen",
+    "has_photo": true,
+    "bio": null,
+    "job_title": null,
+    "company": null,
+    "industry": "Nonprofit",
+    "location": "Seattle, WA",
+    "joined_at": "2024-10-08T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 29,
+    "first_name": "Lena",
+    "last_name": "Flores",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "HR Business Partner",
+    "company": null,
+    "industry": "Manufacturing",
+    "location": "Boston, MA",
+    "joined_at": "2026-04-21T00:00:00.000Z",
+    "topic_interests": [
+      "imposter-syndrome",
+      "stress-burnout",
+      "public-speaking"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 30,
+    "first_name": "Aisha",
+    "last_name": "Delgado",
+    "has_photo": false,
+    "bio": null,
+    "job_title": null,
+    "company": "Harbor Financial",
+    "industry": "Education",
+    "location": "Chicago, IL",
+    "joined_at": "2024-12-26T00:00:00.000Z",
+    "topic_interests": [
+      "being-the-only-one"
+    ],
+    "profile_completeness": 0.4
+  },
+  {
+    "id": 31,
+    "first_name": "Maya",
+    "last_name": "Novak",
+    "has_photo": true,
+    "bio": "Advocate for pay equity and transparent promotion paths.",
+    "job_title": null,
+    "company": null,
+    "industry": "Education",
+    "location": "Boston, MA",
+    "joined_at": "2025-12-29T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 32,
+    "first_name": "Farrah",
+    "last_name": "Nasser",
+    "has_photo": true,
+    "bio": "Advocate for pay equity and transparent promotion paths.",
+    "job_title": "HR Business Partner",
+    "company": "Lumen",
+    "industry": "Nonprofit",
+    "location": "Boston, MA",
+    "joined_at": "2025-05-01T00:00:00.000Z",
+    "topic_interests": [
+      "public-speaking",
+      "stress-burnout"
+    ],
+    "profile_completeness": 1
+  },
+  {
+    "id": 33,
+    "first_name": "Marisol",
+    "last_name": "Sokolov",
+    "has_photo": false,
+    "bio": null,
+    "job_title": null,
+    "company": null,
+    "industry": "Retail",
+    "location": "New York, NY",
+    "joined_at": "2026-03-08T00:00:00.000Z",
+    "topic_interests": [
+      "resilience",
+      "career-breaks",
+      "networking"
+    ],
+    "profile_completeness": 0.4
+  },
+  {
+    "id": 34,
+    "first_name": "Uma",
+    "last_name": "Reyes",
+    "has_photo": true,
+    "bio": "First-time manager figuring it out alongside a great team.",
+    "job_title": "Strategy Lead",
+    "company": "Brightwave",
+    "industry": "Technology",
+    "location": "New York, NY",
+    "joined_at": "2026-07-13T00:00:00.000Z",
+    "topic_interests": [
+      "stress-burnout",
+      "difficult-conversations"
+    ],
+    "profile_completeness": 1
+  },
+  {
+    "id": 35,
+    "first_name": "Blythe",
+    "last_name": "Kim",
+    "has_photo": true,
+    "bio": "Advocate for pay equity and transparent promotion paths.",
+    "job_title": "Product Manager",
+    "company": null,
+    "industry": null,
+    "location": null,
+    "joined_at": "2024-11-04T00:00:00.000Z",
+    "topic_interests": [
+      "work-life-integration",
+      "allyship",
+      "imposter-syndrome"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 36,
+    "first_name": "Sofia",
+    "last_name": "Watanabe",
+    "has_photo": false,
+    "bio": null,
+    "job_title": "Recruiter",
+    "company": null,
+    "industry": "Technology",
+    "location": "Chicago, IL",
+    "joined_at": "2025-03-19T00:00:00.000Z",
+    "topic_interests": [
+      "confidence",
+      "managing-a-team"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 37,
+    "first_name": "Isabel",
+    "last_name": "Sharma",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Account Executive",
+    "company": null,
+    "industry": "Nonprofit",
+    "location": "Austin, TX",
+    "joined_at": "2026-01-27T00:00:00.000Z",
+    "topic_interests": [
+      "gender-bias"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 38,
+    "first_name": "Leila",
+    "last_name": "Santos",
+    "has_photo": false,
+    "bio": "Passionate about mentoring the next generation of women leaders.",
+    "job_title": "Software Engineer",
+    "company": null,
+    "industry": "Manufacturing",
+    "location": null,
+    "joined_at": "2026-02-10T00:00:00.000Z",
+    "topic_interests": [
+      "giving-feedback",
+      "career-breaks"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 39,
+    "first_name": "Esther",
+    "last_name": "Ibrahim",
+    "has_photo": false,
+    "bio": "First-time manager figuring it out alongside a great team.",
+    "job_title": "Data Analyst",
+    "company": "Meridian Labs",
+    "industry": "Education",
+    "location": "New York, NY",
+    "joined_at": "2026-03-03T00:00:00.000Z",
+    "topic_interests": [
+      "public-speaking",
+      "resilience"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 40,
+    "first_name": "Lucia",
+    "last_name": "Okafor",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Research Scientist",
+    "company": "Willow Education",
+    "industry": null,
+    "location": "Toronto, ON",
+    "joined_at": "2025-03-05T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 41,
+    "first_name": "Thea",
+    "last_name": "Vargas",
+    "has_photo": false,
+    "bio": null,
+    "job_title": "Founder",
+    "company": "Kestrel",
+    "industry": null,
+    "location": "New York, NY",
+    "joined_at": "2025-02-14T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 42,
+    "first_name": "Zoe",
+    "last_name": "Ellis",
+    "has_photo": false,
+    "bio": null,
+    "job_title": null,
+    "company": null,
+    "industry": null,
+    "location": null,
+    "joined_at": "2026-09-20T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0
+  },
+  {
+    "id": 43,
+    "first_name": "Priya",
+    "last_name": "Vega",
+    "has_photo": true,
+    "bio": "Returning to work after a career break and finding my footing.",
+    "job_title": null,
+    "company": null,
+    "industry": "Finance",
+    "location": null,
+    "joined_at": "2024-10-29T00:00:00.000Z",
+    "topic_interests": [
+      "gender-bias"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 44,
+    "first_name": "Zoe",
+    "last_name": "Ellis",
+    "has_photo": false,
+    "bio": null,
+    "job_title": null,
+    "company": null,
+    "industry": "Education",
+    "location": "Boston, MA",
+    "joined_at": "2026-06-16T00:00:00.000Z",
+    "topic_interests": [
+      "resilience",
+      "negotiation",
+      "difficult-conversations"
+    ],
+    "profile_completeness": 0.4
+  },
+  {
+    "id": 45,
+    "first_name": "Hana",
+    "last_name": "Jensen",
+    "has_photo": true,
+    "bio": "Returning to work after a career break and finding my footing.",
+    "job_title": "Research Scientist",
+    "company": null,
+    "industry": "Healthcare",
+    "location": null,
+    "joined_at": "2026-06-19T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 46,
+    "first_name": "Dalia",
+    "last_name": "Romano",
+    "has_photo": false,
+    "bio": "Building my leadership toolkit one conversation at a time.",
+    "job_title": "Consultant",
+    "company": "Acme Health",
+    "industry": "Healthcare",
+    "location": "London, UK",
+    "joined_at": "2026-01-12T00:00:00.000Z",
+    "topic_interests": [
+      "networking"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 47,
+    "first_name": "Kira",
+    "last_name": "Petrova",
+    "has_photo": true,
+    "bio": null,
+    "job_title": null,
+    "company": null,
+    "industry": "Healthcare",
+    "location": "Toronto, ON",
+    "joined_at": "2026-04-11T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 48,
+    "first_name": "Simone",
+    "last_name": "Costa",
+    "has_photo": false,
+    "bio": "Career changer, ex-consultant, now in tech.",
+    "job_title": "Strategy Lead",
+    "company": null,
+    "industry": "Manufacturing",
+    "location": "New York, NY",
+    "joined_at": "2024-10-10T00:00:00.000Z",
+    "topic_interests": [
+      "getting-promoted"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 49,
+    "first_name": "Zainab",
+    "last_name": "Osei",
+    "has_photo": false,
+    "bio": null,
+    "job_title": "Strategy Lead",
+    "company": null,
+    "industry": "Finance",
+    "location": "Seattle, WA",
+    "joined_at": "2024-12-20T00:00:00.000Z",
+    "topic_interests": [
+      "gender-bias",
+      "difficult-conversations",
+      "stress-burnout"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 50,
+    "first_name": "Amara",
+    "last_name": "Diallo",
+    "has_photo": false,
+    "bio": null,
+    "job_title": "Product Manager",
+    "company": null,
+    "industry": "Healthcare",
+    "location": "London, UK",
+    "joined_at": "2025-04-13T00:00:00.000Z",
+    "topic_interests": [
+      "managing-up",
+      "managing-a-team",
+      "gender-bias"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 51,
+    "first_name": "Fatima",
+    "last_name": "Park",
+    "has_photo": false,
+    "bio": "Passionate about mentoring the next generation of women leaders.",
+    "job_title": "Data Analyst",
+    "company": null,
+    "industry": null,
+    "location": null,
+    "joined_at": "2026-01-11T00:00:00.000Z",
+    "topic_interests": [
+      "work-life-integration",
+      "leadership-skills"
+    ],
+    "profile_completeness": 0.4
+  },
+  {
+    "id": 52,
+    "first_name": "Rosa",
+    "last_name": "Mendez",
+    "has_photo": true,
+    "bio": "Career changer, ex-consultant, now in tech.",
+    "job_title": null,
+    "company": null,
+    "industry": "Retail",
+    "location": "Remote",
+    "joined_at": "2026-04-07T00:00:00.000Z",
+    "topic_interests": [
+      "communication",
+      "getting-promoted",
+      "work-life-integration"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 53,
+    "first_name": "Carmen",
+    "last_name": "Cruz",
+    "has_photo": true,
+    "bio": null,
+    "job_title": null,
+    "company": null,
+    "industry": null,
+    "location": "Seattle, WA",
+    "joined_at": "2025-11-27T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.4
+  },
+  {
+    "id": 54,
+    "first_name": "Jada",
+    "last_name": "Andersson",
+    "has_photo": true,
+    "bio": "Returning to work after a career break and finding my footing.",
+    "job_title": "Product Manager",
+    "company": null,
+    "industry": "Retail",
+    "location": "Atlanta, GA",
+    "joined_at": "2025-07-23T00:00:00.000Z",
+    "topic_interests": [
+      "managing-a-team",
+      "resilience"
+    ],
+    "profile_completeness": 1
+  },
+  {
+    "id": 55,
+    "first_name": "Renata",
+    "last_name": "Larsson",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Consultant",
+    "company": "Cedar & Co",
+    "industry": "Retail",
+    "location": "Austin, TX",
+    "joined_at": "2025-10-25T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 56,
+    "first_name": "Yara",
+    "last_name": "Bennett",
+    "has_photo": true,
+    "bio": "Career changer, ex-consultant, now in tech.",
+    "job_title": "UX Designer",
+    "company": "Meridian Labs",
+    "industry": "Education",
+    "location": "Remote",
+    "joined_at": "2025-06-08T00:00:00.000Z",
+    "topic_interests": [
+      "sponsorship-mentorship"
+    ],
+    "profile_completeness": 1
+  },
+  {
+    "id": 57,
+    "first_name": "Talia",
+    "last_name": "Mbeki",
+    "has_photo": false,
+    "bio": "First-time manager figuring it out alongside a great team.",
+    "job_title": null,
+    "company": null,
+    "industry": "Education",
+    "location": "Toronto, ON",
+    "joined_at": "2024-12-17T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 58,
+    "first_name": "Mei",
+    "last_name": "Kaur",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Founder",
+    "company": null,
+    "industry": "Finance",
+    "location": null,
+    "joined_at": "2025-08-20T00:00:00.000Z",
+    "topic_interests": [
+      "giving-feedback",
+      "working-motherhood"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 59,
+    "first_name": "Elena",
+    "last_name": "Haddad",
+    "has_photo": true,
+    "bio": "Advocate for pay equity and transparent promotion paths.",
+    "job_title": "Sales Manager",
+    "company": "Willow Education",
+    "industry": "Finance",
+    "location": null,
+    "joined_at": "2025-11-18T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 60,
+    "first_name": "Bianca",
+    "last_name": "Rossi",
+    "has_photo": false,
+    "bio": null,
+    "job_title": "HR Business Partner",
+    "company": null,
+    "industry": "Nonprofit",
+    "location": "Seattle, WA",
+    "joined_at": "2026-07-07T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 61,
+    "first_name": "Imani",
+    "last_name": "Obrien",
+    "has_photo": true,
+    "bio": "Advocate for pay equity and transparent promotion paths.",
+    "job_title": null,
+    "company": "Vantage",
+    "industry": "Manufacturing",
+    "location": null,
+    "joined_at": "2024-10-27T00:00:00.000Z",
+    "topic_interests": [
+      "leadership-skills"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 62,
+    "first_name": "Paloma",
+    "last_name": "Chen",
+    "has_photo": false,
+    "bio": "Building my leadership toolkit one conversation at a time.",
+    "job_title": "Finance Manager",
+    "company": "Willow Education",
+    "industry": "Healthcare",
+    "location": "Denver, CO",
+    "joined_at": "2025-11-04T00:00:00.000Z",
+    "topic_interests": [
+      "gender-bias",
+      "managing-up"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 63,
+    "first_name": "Ximena",
+    "last_name": "Malik",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Community Manager",
+    "company": null,
+    "industry": null,
+    "location": null,
+    "joined_at": "2025-06-28T00:00:00.000Z",
+    "topic_interests": [
+      "career-breaks",
+      "confidence",
+      "leadership-skills"
+    ],
+    "profile_completeness": 0.4
+  },
+  {
+    "id": 64,
+    "first_name": "Ingrid",
+    "last_name": "Nguyen",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Recruiter",
+    "company": "Willow Education",
+    "industry": null,
+    "location": "Seattle, WA",
+    "joined_at": "2026-04-25T00:00:00.000Z",
+    "topic_interests": [
+      "getting-promoted"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 65,
+    "first_name": "Yuki",
+    "last_name": "Tanaka",
+    "has_photo": false,
+    "bio": null,
+    "job_title": "Founder",
+    "company": "Vantage",
+    "industry": "Technology",
+    "location": "Austin, TX",
+    "joined_at": "2026-06-30T00:00:00.000Z",
+    "topic_interests": [
+      "sponsorship-mentorship",
+      "career-breaks"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 66,
+    "first_name": "Grace",
+    "last_name": "Weaver",
+    "has_photo": false,
+    "bio": null,
+    "job_title": "Engineering Manager",
+    "company": "Northwind",
+    "industry": "Finance",
+    "location": null,
+    "joined_at": "2026-05-25T00:00:00.000Z",
+    "topic_interests": [
+      "gender-bias",
+      "visibility-recognition",
+      "being-the-only-one"
+    ],
+    "profile_completeness": 0.4
+  },
+  {
+    "id": 67,
+    "first_name": "Tara",
+    "last_name": "Fischer",
+    "has_photo": true,
+    "bio": "Career changer, ex-consultant, now in tech.",
+    "job_title": "UX Designer",
+    "company": "Acme Health",
+    "industry": null,
+    "location": null,
+    "joined_at": "2026-05-22T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 68,
+    "first_name": "Halle",
+    "last_name": "Cohen",
+    "has_photo": false,
+    "bio": "First-time manager figuring it out alongside a great team.",
+    "job_title": "Consultant",
+    "company": null,
+    "industry": "Media",
+    "location": "Atlanta, GA",
+    "joined_at": "2026-05-09T00:00:00.000Z",
+    "topic_interests": [
+      "gender-bias",
+      "managing-a-team"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 69,
+    "first_name": "Olga",
+    "last_name": "Flores",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Finance Manager",
+    "company": null,
+    "industry": "Education",
+    "location": null,
+    "joined_at": "2025-09-07T00:00:00.000Z",
+    "topic_interests": [
+      "being-the-only-one",
+      "sponsorship-mentorship"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 70,
+    "first_name": "Wren",
+    "last_name": "Delgado",
+    "has_photo": false,
+    "bio": null,
+    "job_title": null,
+    "company": null,
+    "industry": "Manufacturing",
+    "location": "Chicago, IL",
+    "joined_at": "2026-03-26T00:00:00.000Z",
+    "topic_interests": [
+      "giving-feedback",
+      "visibility-recognition"
+    ],
+    "profile_completeness": 0.4
+  },
+  {
+    "id": 71,
+    "first_name": "Devi",
+    "last_name": "Novak",
+    "has_photo": false,
+    "bio": null,
+    "job_title": "Finance Manager",
+    "company": null,
+    "industry": "Healthcare",
+    "location": "Chicago, IL",
+    "joined_at": "2025-03-09T00:00:00.000Z",
+    "topic_interests": [
+      "imposter-syndrome",
+      "stress-burnout",
+      "visibility-recognition"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 72,
+    "first_name": "Naomi",
+    "last_name": "Nasser",
+    "has_photo": true,
+    "bio": null,
+    "job_title": null,
+    "company": "Willow Education",
+    "industry": "Retail",
+    "location": null,
+    "joined_at": "2024-10-02T00:00:00.000Z",
+    "topic_interests": [
+      "managing-a-team",
+      "giving-feedback"
+    ],
+    "profile_completeness": 0.4
+  },
+  {
+    "id": 73,
+    "first_name": "Nadia",
+    "last_name": "Sokolov",
+    "has_photo": true,
+    "bio": "Returning to work after a career break and finding my footing.",
+    "job_title": "Strategy Lead",
+    "company": null,
+    "industry": null,
+    "location": null,
+    "joined_at": "2025-06-28T00:00:00.000Z",
+    "topic_interests": [
+      "resilience",
+      "difficult-conversations",
+      "visibility-recognition"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 74,
+    "first_name": "Nina",
+    "last_name": "Reyes",
+    "has_photo": false,
+    "bio": "Returning to work after a career break and finding my footing.",
+    "job_title": "Research Scientist",
+    "company": "Meridian Labs",
+    "industry": "Nonprofit",
+    "location": "Seattle, WA",
+    "joined_at": "2025-05-13T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 75,
+    "first_name": "Gita",
+    "last_name": "Kim",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Program Coordinator",
+    "company": null,
+    "industry": "Healthcare",
+    "location": null,
+    "joined_at": "2026-05-06T00:00:00.000Z",
+    "topic_interests": [
+      "getting-promoted"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 76,
+    "first_name": "Noor",
+    "last_name": "Watanabe",
+    "has_photo": false,
+    "bio": "Career changer, ex-consultant, now in tech.",
+    "job_title": "UX Designer",
+    "company": null,
+    "industry": "Retail",
+    "location": null,
+    "joined_at": "2026-04-05T00:00:00.000Z",
+    "topic_interests": [
+      "confidence",
+      "resilience",
+      "visibility-recognition"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 77,
+    "first_name": "Valeria",
+    "last_name": "Sharma",
+    "has_photo": false,
+    "bio": null,
+    "job_title": null,
+    "company": null,
+    "industry": null,
+    "location": "Toronto, ON",
+    "joined_at": "2026-04-20T00:00:00.000Z",
+    "topic_interests": [
+      "allyship",
+      "stress-burnout"
+    ],
+    "profile_completeness": 0.2
+  },
+  {
+    "id": 78,
+    "first_name": "Camila",
+    "last_name": "Santos",
+    "has_photo": true,
+    "bio": "Building my leadership toolkit one conversation at a time.",
+    "job_title": "Program Coordinator",
+    "company": "Lumen",
+    "industry": "Retail",
+    "location": null,
+    "joined_at": "2025-02-21T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 79,
+    "first_name": "Lena",
+    "last_name": "Ibrahim",
+    "has_photo": true,
+    "bio": null,
+    "job_title": null,
+    "company": null,
+    "industry": "Retail",
+    "location": null,
+    "joined_at": "2026-08-31T00:00:00.000Z",
+    "topic_interests": [
+      "managing-a-team",
+      "being-the-only-one"
+    ],
+    "profile_completeness": 0.4
+  },
+  {
+    "id": 80,
+    "first_name": "Aisha",
+    "last_name": "Okafor",
+    "has_photo": false,
+    "bio": "Passionate about mentoring the next generation of women leaders.",
+    "job_title": "Engineering Manager",
+    "company": null,
+    "industry": "Media",
+    "location": "Toronto, ON",
+    "joined_at": "2026-04-27T00:00:00.000Z",
+    "topic_interests": [
+      "gender-bias",
+      "being-the-only-one",
+      "managing-up"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 81,
+    "first_name": "Maya",
+    "last_name": "Vargas",
+    "has_photo": true,
+    "bio": "Career changer, ex-consultant, now in tech.",
+    "job_title": null,
+    "company": null,
+    "industry": "Manufacturing",
+    "location": null,
+    "joined_at": "2026-02-02T00:00:00.000Z",
+    "topic_interests": [
+      "networking",
+      "confidence",
+      "career-breaks"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 82,
+    "first_name": "Farrah",
+    "last_name": "Adeyemi",
+    "has_photo": true,
+    "bio": "Advocate for pay equity and transparent promotion paths.",
+    "job_title": null,
+    "company": null,
+    "industry": null,
+    "location": "Austin, TX",
+    "joined_at": "2026-05-04T00:00:00.000Z",
+    "topic_interests": [
+      "managing-up",
+      "imposter-syndrome"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 83,
+    "first_name": "Marisol",
+    "last_name": "Vega",
+    "has_photo": true,
+    "bio": "Building my leadership toolkit one conversation at a time.",
+    "job_title": "Nonprofit Director",
+    "company": "Acme Health",
+    "industry": "Retail",
+    "location": "Toronto, ON",
+    "joined_at": "2025-03-24T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 1
+  },
+  {
+    "id": 84,
+    "first_name": "Uma",
+    "last_name": "Ellis",
+    "has_photo": true,
+    "bio": "First-time manager figuring it out alongside a great team.",
+    "job_title": "Program Coordinator",
+    "company": null,
+    "industry": null,
+    "location": "Seattle, WA",
+    "joined_at": "2025-02-20T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 85,
+    "first_name": "Blythe",
+    "last_name": "Jensen",
+    "has_photo": false,
+    "bio": "First-time manager figuring it out alongside a great team.",
+    "job_title": "Data Analyst",
+    "company": null,
+    "industry": "Finance",
+    "location": "Atlanta, GA",
+    "joined_at": "2026-07-01T00:00:00.000Z",
+    "topic_interests": [
+      "allyship"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 86,
+    "first_name": "Sofia",
+    "last_name": "Romano",
+    "has_photo": false,
+    "bio": "Returning to work after a career break and finding my footing.",
+    "job_title": "Marketing Lead",
+    "company": "Willow Education",
+    "industry": "Education",
+    "location": "New York, NY",
+    "joined_at": "2026-02-20T00:00:00.000Z",
+    "topic_interests": [
+      "visibility-recognition"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 87,
+    "first_name": "Isabel",
+    "last_name": "Petrova",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Account Executive",
+    "company": "Harbor Financial",
+    "industry": "Finance",
+    "location": null,
+    "joined_at": "2026-06-11T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 88,
+    "first_name": "Leila",
+    "last_name": "Costa",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Account Executive",
+    "company": null,
+    "industry": "Nonprofit",
+    "location": null,
+    "joined_at": "2025-01-08T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 89,
+    "first_name": "Esther",
+    "last_name": "Osei",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Founder",
+    "company": null,
+    "industry": null,
+    "location": "London, UK",
+    "joined_at": "2026-01-03T00:00:00.000Z",
+    "topic_interests": [
+      "communication",
+      "allyship",
+      "sponsorship-mentorship"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 90,
+    "first_name": "Lucia",
+    "last_name": "Diallo",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Consultant",
+    "company": "Brightwave",
+    "industry": "Finance",
+    "location": "New York, NY",
+    "joined_at": "2025-07-01T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 91,
+    "first_name": "Thea",
+    "last_name": "Park",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Account Executive",
+    "company": null,
+    "industry": "Finance",
+    "location": null,
+    "joined_at": "2025-12-04T00:00:00.000Z",
+    "topic_interests": [
+      "career-breaks",
+      "confidence"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 92,
+    "first_name": "Anika",
+    "last_name": "Mendez",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Data Analyst",
+    "company": "Cedar & Co",
+    "industry": "Finance",
+    "location": null,
+    "joined_at": "2026-08-26T00:00:00.000Z",
+    "topic_interests": [
+      "confidence",
+      "sponsorship-mentorship",
+      "career-breaks"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 93,
+    "first_name": "Priya",
+    "last_name": "Cruz",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "UX Designer",
+    "company": "Willow Education",
+    "industry": "Media",
+    "location": null,
+    "joined_at": "2025-02-25T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 94,
+    "first_name": "Zoe",
+    "last_name": "Andersson",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Attorney",
+    "company": "Kestrel",
+    "industry": "Retail",
+    "location": "Chicago, IL",
+    "joined_at": "2026-03-18T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 95,
+    "first_name": "Hana",
+    "last_name": "Larsson",
+    "has_photo": false,
+    "bio": "First-time manager figuring it out alongside a great team.",
+    "job_title": null,
+    "company": null,
+    "industry": "Finance",
+    "location": "Remote",
+    "joined_at": "2025-09-30T00:00:00.000Z",
+    "topic_interests": [
+      "allyship"
+    ],
+    "profile_completeness": 0.6
+  },
+  {
+    "id": 96,
+    "first_name": "Dalia",
+    "last_name": "Bennett",
+    "has_photo": true,
+    "bio": "Building my leadership toolkit one conversation at a time.",
+    "job_title": "Marketing Lead",
+    "company": null,
+    "industry": "Retail",
+    "location": "Atlanta, GA",
+    "joined_at": "2025-08-07T00:00:00.000Z",
+    "topic_interests": [
+      "networking",
+      "communication"
+    ],
+    "profile_completeness": 1
+  },
+  {
+    "id": 97,
+    "first_name": "Kira",
+    "last_name": "Mbeki",
+    "has_photo": false,
+    "bio": "Passionate about mentoring the next generation of women leaders.",
+    "job_title": "Founder",
+    "company": "Acme Health",
+    "industry": null,
+    "location": "Atlanta, GA",
+    "joined_at": "2025-04-25T00:00:00.000Z",
+    "topic_interests": [
+      "sponsorship-mentorship",
+      "negotiation"
+    ],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 98,
+    "first_name": "Simone",
+    "last_name": "Kaur",
+    "has_photo": false,
+    "bio": "Returning to work after a career break and finding my footing.",
+    "job_title": "Data Analyst",
+    "company": null,
+    "industry": "Finance",
+    "location": "Austin, TX",
+    "joined_at": "2025-06-04T00:00:00.000Z",
+    "topic_interests": [],
+    "profile_completeness": 0.8
+  },
+  {
+    "id": 99,
+    "first_name": "Zainab",
+    "last_name": "Haddad",
+    "has_photo": true,
+    "bio": "Returning to work after a career break and finding my footing.",
+    "job_title": "Data Analyst",
+    "company": null,
+    "industry": "Education",
+    "location": "Remote",
+    "joined_at": "2025-01-24T00:00:00.000Z",
+    "topic_interests": [
+      "networking"
+    ],
+    "profile_completeness": 1
+  },
+  {
+    "id": 100,
+    "first_name": "Amara",
+    "last_name": "Rossi",
+    "has_photo": true,
+    "bio": null,
+    "job_title": "Nonprofit Director",
+    "company": "Northwind",
+    "industry": null,
+    "location": "Boston, MA",
+    "joined_at": "2026-08-31T00:00:00.000Z",
+    "topic_interests": [
+      "career-breaks"
+    ],
+    "profile_completeness": 0.8
+  }
+]

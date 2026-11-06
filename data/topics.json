@@ -1,0 +1,134 @@
+[
+  {
+    "id": 1,
+    "slug": "leadership-skills",
+    "label": "Leadership skills",
+    "domain": "content"
+  },
+  {
+    "id": 2,
+    "slug": "managing-a-team",
+    "label": "Managing a team",
+    "domain": "content"
+  },
+  {
+    "id": 3,
+    "slug": "giving-feedback",
+    "label": "Giving feedback",
+    "domain": "content"
+  },
+  {
+    "id": 4,
+    "slug": "negotiation",
+    "label": "Negotiation",
+    "domain": "content"
+  },
+  {
+    "id": 5,
+    "slug": "getting-promoted",
+    "label": "Getting promoted",
+    "domain": "content"
+  },
+  {
+    "id": 6,
+    "slug": "managing-up",
+    "label": "Managing up",
+    "domain": "content"
+  },
+  {
+    "id": 7,
+    "slug": "visibility-recognition",
+    "label": "Visibility & recognition",
+    "domain": "content"
+  },
+  {
+    "id": 8,
+    "slug": "networking",
+    "label": "Networking",
+    "domain": "content"
+  },
+  {
+    "id": 9,
+    "slug": "sponsorship-mentorship",
+    "label": "Sponsorship & mentorship",
+    "domain": "content"
+  },
+  {
+    "id": 10,
+    "slug": "confidence",
+    "label": "Confidence",
+    "domain": "content"
+  },
+  {
+    "id": 11,
+    "slug": "imposter-syndrome",
+    "label": "Imposter syndrome",
+    "domain": "content"
+  },
+  {
+    "id": 12,
+    "slug": "stress-burnout",
+    "label": "Stress & burnout",
+    "domain": "content"
+  },
+  {
+    "id": 13,
+    "slug": "resilience",
+    "label": "Resilience",
+    "domain": "content"
+  },
+  {
+    "id": 14,
+    "slug": "communication",
+    "label": "Communication",
+    "domain": "content"
+  },
+  {
+    "id": 15,
+    "slug": "difficult-conversations",
+    "label": "Difficult conversations",
+    "domain": "content"
+  },
+  {
+    "id": 16,
+    "slug": "gender-bias",
+    "label": "Gender bias",
+    "domain": "content"
+  },
+  {
+    "id": 17,
+    "slug": "allyship",
+    "label": "Allyship",
+    "domain": "content"
+  },
+  {
+    "id": 18,
+    "slug": "working-motherhood",
+    "label": "Working motherhood",
+    "domain": "content"
+  },
+  {
+    "id": 19,
+    "slug": "public-speaking",
+    "label": "Public speaking",
+    "domain": "content"
+  },
+  {
+    "id": 20,
+    "slug": "career-breaks",
+    "label": "Career breaks",
+    "domain": "content"
+  },
+  {
+    "id": 21,
+    "slug": "work-life-integration",
+    "label": "Work-life integration",
+    "domain": "content"
+  },
+  {
+    "id": 22,
+    "slug": "being-the-only-one",
+    "label": "Being the only one",
+    "domain": "content"
+  }
+]
